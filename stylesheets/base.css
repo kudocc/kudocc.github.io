@@ -57,12 +57,19 @@ body {
 	float: right;
 	width: 200px;
 	height: 400px;
-	background-color: #eee;
+	background-color: #C0E4ff;
+	border-style: solid;
+	border-width: 1.0px;
 }
 
 .menuitem {
 	margin: 5px 0 15px 0;
 	text-decoration: none;
+}
+
+.menuitem a {
+	text-decoration: none;
+	color: #0085ce;
 }
 
 /* blog begin */
@@ -75,7 +82,7 @@ body {
 	font-weight: bold;
 }
 
-.objectivec-code {
+.objc-code {
 	background: #e0e0e0;
 }
 
@@ -87,12 +94,6 @@ body {
 section {
 	margin-top: 0px;
 	margin-bottom: 50px;
-	clear: left;
-}
-
-.photo {
-	float: left;
-	clear: left;
 }
 
 img.photo {
@@ -101,15 +102,11 @@ img.photo {
 }
 
 div.paragraph {
-	clear: left;
 	margin-top: 10px;
 	margin-bottom:10px;
 }
 
 /* blog 2 test */
-.test {
-	
-}
 
 #div1 {
 	width: 200px;

@@ -2,13 +2,13 @@
 <html lang="en">
 <meta charset="UTF-8">
 <head>
-  <title>Live as a programmer</title>
+  <title>Too hard to come up with the title</title>
   <link href="../stylesheets/base.css" rel="stylesheet" />
 </head>
 <body>
 
 <div class="bloghead">
-  Just want to be a common
+  Kudo is 工藤新一
 </div>
 
 <div id="menu">
@@ -22,10 +22,10 @@
   <a href="http://stackoverflow.com/users/1079899/kudocc">Stackoverflow</a>
   </div>
   <div class="menuitem">
-  <a>About me</a>
+  <a href="../index.html">About me</a>
   </div>
   <div class="menuitem">
-  <a>Email me</a>
+  <a href="mailto:cangmuma@126.com">Send me Email</a>
   </div>
 </div>
 
@@ -37,23 +37,28 @@
     对于编译器来说，编译的对象是实现文件，比如C语言就是后缀名是c的文件，C++就是cpp，Objective-c就是m，而头文件则是用来定义类或者变量的，他们被实现文件引入，在预编译阶段加入到实现文件中。之所以需要引用头文件，是因为下面的实现可能引用到了一个类或者一个变量，而编译器需要知道他们的类型来生成汇编代码。比如在头文件中定义了一个结构体
   </p>
   <pre class="objc-code">
+    <code>
   struct TestStruct {
     int value1 ;
     int value2 ;
   };
+    </code>
   </pre>
   <p>
     然后在一个实现文件中引用了这个结构体
   </p>
   <pre class="objc-code">
+    <code>
   struct TestStruct st ;
   st.value2 = 10 ;
+    </code>
   </pre>
   <p>
     编译器遇到符号st和st.value2时，他不知道任何他们的信息，不知道它需要占用多少空间，不知道value2相对于st首地址的位置，所以没有办法生成对应的汇编代码。这就是为什么我们需要知道对一个变量或者类的定义，目的是为了为编译器提供有足够的信息产生汇编代码。那么前置声明是什么？前置声明是告诉编译器对一个变量的定义在后面可以找到，类的前置声明在Objective-C中写作@class xxx，我们今天主要讨论的是类，其他类型也是类似的原理。不过如果实现文件不需要这个类的定义，那即使后面没有找到类定义也没关系。看过很多书里面都说要尽量在头文件中使用前置声明，它到底有什么作用呢？我今天用例子说明它的作用。
   </p>
   <p>我的工程里有2个module类，分别是Module1、Module2，一个用来管理module类的Manager类，其头文件如下</p>
   <pre class="objc-code">
+    <code>
 #if 1
 #import "Module1.h"
 #import "Module2.h"
@@ -66,6 +71,7 @@
 @property (nonatomic, strong) Module2 *m2 ;
 + (instancetype)sharedManager ;
 @end
+    </code>
   </pre>
   <div class="paragraph">
     Manager是一个单例，其他地方都是通过[Manager sharedManager]来获取Manager的实例，进而access两个Module对象。在Manager类头文件中，我有两个选择:
@@ -79,8 +85,10 @@
     现在比如在AppDelegate.m中使用了Module1，贴出代码：
   </div>
   <pre class="objc-code">
+    <code>
 int value = [Manager sharedManager].m1.module1Value ;
 NSLog(@"%d", value) ;
+    </code>
   </pre>
   <div class="paragraph">
     首先可以肯定的是在AppDelegate.m中要import “Manager.h”。如果在Manager中使用了第一种方式，即import module类的头文件，那么在AppDelegate.m中可以不用再import “Module1.h”了。如果Manager中使用了第二种方式，即前置声明，那么在AppDelegate.m中需要import “Module1.h”，注意，这里不需要import “Module2.h”，因为AppDelegate.m中没有引用Module2。
