@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <title>Too hard to come up with the title</title>
+    <link rel="stylesheet" href="../stylesheets/base.css" />
+</head>
+<body>
+
+<div class="bloghead">
+    Kudo is 工藤新一
+</div>
+
+<div id="menu">
+    <div class="menuitem">
+        <a href="../index.html">Home</a>
+    </div>
+    <div class="menuitem">
+        <a href="https://github.com/kudocc">GitHub</a>
+    </div>
+    <div class="menuitem">
+        <a href="http://stackoverflow.com/users/1079899/kudocc">Stackoverflow</a>
+    </div>
+    <div class="menuitem">
+        <a href="../index.html">About me</a>
+    </div>
+    <div class="menuitem">
+        <a href="mailto:cangmuma@126.com">Send me Email</a>
+    </div>
+</div>
+
+<div id="blogtitle">
+    Create a NSMutableArray which doesn't retain its elements
+</div>
+
+<article>
+    <section>
+        <div class="paragraph">
+            从前一个朋友去面试被问到这个问题，他回来之后问我，我说我也不知道诶...最后我们一致认为这个问题挺sb，几天前看到Effective Objective-C 2.0之后，我发觉是我们sb了。
+        </div>
+    </section>
+
+    <section>
+        <div class="paragraph">
+            其实也挺简单的，只是我们不知道对应的CFMutableArray的创建过程，其实创建CFMutableArray的时候是需要提供一个结构体，这个结构体有几个函数指针，其中两个就是在加入了一个对象、移除了一个对象时被调用的，默认的处理是加入对象时调retain，移除时调release。为了达到我们的目的，这里直接赋值为NULL，就是什么也不做，这样就创建了一个不会retain对象的CFMutableArray，不要忘记CFMutableArray and NSMutableArray is toll-free bridge的，所以直接强转一下就OK了，下面贴出代码。
+        </div>
+
+        <pre class="objc-code">
+- (void)testfun
+{
+    NSMutableArray *mArray = nil ;
+    CFArrayCallBacks callBack = {
+        0, NULL, NULL, NULL, CFEqual
+    } ;
+    CFMutableArrayRef cfMArray = CFArrayCreateMutable(NULL, 5, &callBack) ;
+    {
+        mArray = (__bridge_transfer NSMutableArray *)cfMArray ;
+        NSObject *obj = [[NSObject alloc] init] ;
+        [mArray addObject:obj] ;
+        [mArray addObject:@1] ;
+        [mArray addObject:@2] ;
+    }
+    id obj = mArray[0] ;
+    NSLog(@"%@", obj) ;
+}
+        </pre>
+
+        <div class="paragraph">
+            运行起来的结果就是崩溃，崩溃最后一行，函数是objc_release，应该是对已经释放的对象重复释放。
+        </div>
+
+</article>
+    
+</body>
+</html>
