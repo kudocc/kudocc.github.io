@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <title>Too hard to come up with the title</title>
+    <link rel="stylesheet" href="../stylesheets/base.css" />
+</head>
+<body>
+
+<div class="bloghead">
+    Kudo is 工藤新一
+</div>
+
+<div id="menu">
+    <div class="menuitem">
+        <a href="../index.html">Home</a>
+    </div>
+    <div class="menuitem">
+        <a href="https://github.com/kudocc">GitHub</a>
+    </div>
+    <div class="menuitem">
+        <a href="http://stackoverflow.com/users/1079899/kudocc">Stackoverflow</a>
+    </div>
+    <div class="menuitem">
+        <a href="../index.html">About me</a>
+    </div>
+    <div class="menuitem">
+        <a href="mailto:cangmuma@126.com">Send me Email</a>
+    </div>
+</div>
+
+<div id="blogtitle">
+    ARC and method name
+</div>
+
+<article>
+    <section>
+        <div class="paragraph">
+            在ARC下，在一个方法中返回一个对象我们都有写过，但是你知道方法的名称对编译器的影响么？当方法的名字以alloc、new、copy、mutableCopy开头时，产生的对象归调用者所有，就是调用者负责释放；否则，产生的对象由创建它的方法来释放，即应该在方法的最后对返回的对象发送autorelease消息（事实上编译器在这有一个优化，可能不会发送autorelease，我想以后单独谈谈这个优化）。
+        </div>
+    </section>
+
+    <section>
+        <div class="paragraph">
+            我想用下面的代码来证明:
+        </div>
+
+        <pre class="objc-code">
+@implementation Module1
+
+- (Module1 *)newModule1
+{
+    Module1 *a = [[Module1 alloc] init] ;
+    return a ;
+}
+
+- (Module1 *)someModule1
+{
+    Module1 *a = [[Module1 alloc] init] ;
+    return a ;
+}
+
+@end
+        </pre>
+    </section>
+
+    <section>
+        <div class="paragraph">
+            Module1这个类中就两个方法，它们都返回了新创建的对象，我们来看一下汇编代码（Using Debug configuration, armv7 architecture）。Assembly一下看看结果，首先是newModule1，这里我删掉了一点注释：
+            <pre class="objc-code">
+"-[Module1 newModule1]":
+Lfunc_begin0:
+	.cfi_startproc
+@ BB#0:
+	push	{r7, lr}
+	mov	r7, sp
+	sub	sp, #24
+	movw	r2, :lower16:(L_objc_msgSend$non_lazy_ptr-(LPC0_0+4))
+	movt	r2, :upper16:(L_objc_msgSend$non_lazy_ptr-(LPC0_0+4))
+LPC0_0:
+	add	r2, pc
+	ldr	r2, [r2]
+	movw	r3, :lower16:(L_OBJC_SELECTOR_REFERENCES_-(LPC0_1+4))
+	movt	r3, :upper16:(L_OBJC_SELECTOR_REFERENCES_-(LPC0_1+4))
+LPC0_1:
+	add	r3, pc
+	movw	r9, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_-(LPC0_2+4))
+	movt	r9, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_-(LPC0_2+4))
+LPC0_2:
+	add	r9, pc
+	str	r0, [sp, #20]
+	str	r1, [sp, #16]
+Ltmp0:
+	ldr.w	r0, [r9]
+	ldr	r1, [r3]
+	blx	r2
+	movw	r1, :lower16:(L_objc_msgSend$non_lazy_ptr-(LPC0_3+4))
+	movt	r1, :upper16:(L_objc_msgSend$non_lazy_ptr-(LPC0_3+4))
+LPC0_3:
+	add	r1, pc
+	ldr	r1, [r1]
+	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_2-(LPC0_4+4))
+	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_2-(LPC0_4+4))
+LPC0_4:
+	add	r2, pc
+	ldr	r2, [r2]
+	str	r1, [sp, #4]            @ 4-byte Spill
+	mov	r1, r2
+	ldr	r2, [sp, #4]            @ 4-byte Reload
+	blx	r2
+	str	r0, [sp, #12]
+	ldr	r0, [sp, #12]
+	bl	_objc_retain
+	movs	r1, #0
+	add	r2, sp, #12
+	movs	r3, #1
+	str	r3, [sp, #8]
+	str	r0, [sp]                @ 4-byte Spill
+	mov	r0, r2
+	bl	_objc_storeStrong
+	ldr	r0, [sp]                @ 4-byte Reload
+	add	sp, #24
+	pop	{r7, pc}
+Ltmp1:
+Lfunc_end0:
+	.cfi_endproc
+            </pre>
+        </div>
+
+        <div class="paragraph">
+            然后是someModule1：
+            <pre class="objc-code">
+"-[Module1 someModule1]":
+Lfunc_begin1:
+	.cfi_startproc
+@ BB#0:
+	push	{r7, lr}
+	mov	r7, sp
+	sub	sp, #20
+	@DEBUG_VALUE: -[Module1 someModule1]:self <- undef
+	@DEBUG_VALUE: -[Module1 someModule1]:_cmd <- undef
+	str	r0, [sp, #16]
+	str	r1, [sp, #12]
+	movw	r0, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_-(LPC1_0+4))
+	movt	r0, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_-(LPC1_0+4))
+LPC1_0:
+	add	r0, pc
+	ldr	r0, [r0]
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_-(LPC1_1+4))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_-(LPC1_1+4))
+LPC1_1:
+	add	r1, pc
+	ldr	r1, [r1]
+	blx	_objc_msgSend
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_2-(LPC1_2+4))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_2-(LPC1_2+4))
+LPC1_2:
+	add	r1, pc
+	ldr	r1, [r1]
+	blx	_objc_msgSend
+	str	r0, [sp, #8]
+	blx	_objc_retain
+	movs	r1, #1
+	str	r1, [sp, #4]
+	add	r1, sp, #8
+	movs	r2, #0
+	str	r0, [sp]                @ 4-byte Spill
+	mov	r0, r1
+	mov	r1, r2
+	blx	_objc_storeStrong
+	ldr	r0, [sp]                @ 4-byte Reload
+	add	sp, #20
+	pop.w	{r7, lr}
+	b.w	_objc_autoreleaseReturnValue
+Ltmp2:
+Lfunc_end1:
+	.cfi_endproc
+            </pre>
+        </div>
+
+        <div class="paragraph">
+            我拿newModule1这个方法作为例子稍微解释一下，以下全部都是我的理解，我不敢保证正确性。首先是这个符号：L_objc_msgSend$non_lazy_ptr，全文搜索一下就能找到它的定义。
+            <pre class="objc-code">
+L_objc_msgSend$non_lazy_ptr:
+	.indirect_symbol	_objc_msgSend
+	.long	0
+            </pre>
+            我把L_objc_msgSend$non_lazy_ptr当做指针的地址，而它下面那个".long 0"就是指针的内容，可以把它看作是一个long型的值，它存放的是objc_msgSend运行时的地址，现在它的值是0，因为现在是编译阶段，它的值是在程序加载时由加载器修改的。
+            只有objc_msgSend是特殊的，由于objc_msgSend是Objective-C运行时的代码，运行时代码位于动态链接库中，是在程序加载时动态分配地址的，对于objc_msgSend这个函数，它的地址就是程序运行时才知道的，这里采用了间接引用的方式，加载器加载程序的时候会将objc_msgSend的地址写入这个位置上，编译器不用管它运行时的地址是什么，它只需要知道这里在运行时就会存放着，所以编译器生成的代码就是从这个位置读出值（objc_msgSend的地址），然后再去调用这个函数的。
+        </div>
+
+        <div class="paragraph">
+            L_OBJC_SELECTOR_REFERENCES_是这样定义的：
+            <pre class="objc-code">
+L_OBJC_METH_VAR_NAME_:                  @ @"\01L_OBJC_METH_VAR_NAME_"
+	.asciz	"alloc"
+
+	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.align	2                       @ @"\01L_OBJC_SELECTOR_REFERENCES_"
+L_OBJC_SELECTOR_REFERENCES_:
+	.long	L_OBJC_METH_VAR_NAME_
+            </pre>
+            L_OBJC_SELECTOR_REFERENCES_也是指针的地址。它是一个符号，表示一个长度为long大小的位置，这个地方保存了一个地址，是L_OBJC_METH_VAR_NAME_这个符号的地址，而这个符号的地址存放的就是alloc这个字符串，alloc字符串的地址也是objc_msgSend的第二个参数，即selector。
+        </div>
+
+        <div class="paragraph">
+            L_OBJC_CLASSLIST_REFERENCES_$_是这样定义的：
+            <pre class="objc-code">
+	.section	__DATA,__objc_data
+	.globl	_OBJC_CLASS_$_Module1   @ @"OBJC_CLASS_$_Module1"
+	.align	2
+_OBJC_CLASS_$_Module1:
+	.long	_OBJC_METACLASS_$_Module1
+	.long	_OBJC_CLASS_$_NSObject
+	.long	__objc_empty_cache
+	.long	0
+	.long	l_OBJC_CLASS_RO_$_Module1
+
+	.section	__DATA,__objc_classrefs,regular,no_dead_strip
+	.align	2                       @ @"\01L_OBJC_CLASSLIST_REFERENCES_$_"
+L_OBJC_CLASSLIST_REFERENCES_$_:
+	.long	_OBJC_CLASS_$_Module1
+            </pre>
+            同样也可以把它当做指针的地址，这个指针指向的是Module1这个类的类对象，即_OBJC_CLASS_$_Module1，它的地址是objc_msgSend的第一个参数，调用objc_msgSend([Module1 class], @selector(alloc))。
+        </div>
+
+        <div class="paragraph">
+            L_OBJC_SELECTOR_REFERENCES_2我就不解释了，其实就是指向init字符串的指针。
+            <pre class="objc-code">
+	.section	__TEXT,__objc_methname,cstring_literals
+L_OBJC_METH_VAR_NAME_1:                 @ @"\01L_OBJC_METH_VAR_NAME_1"
+	.asciz	"init"
+
+	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.align	2                       @ @"\01L_OBJC_SELECTOR_REFERENCES_2"
+L_OBJC_SELECTOR_REFERENCES_2:
+	.long	L_OBJC_METH_VAR_NAME_1
+            </pre>
+        </div>
+
+        <div class="paragraph">
+            这里面一共有四个函数调用，分别是
+            <ol>
+                <li>objc_msgSend([Module1 class], @selector(alloc))</li>
+                <li>objc_msgSend(o, @selector(init))</li>
+                <li>objc_retain(o)</li>
+                <li>objc_strong(o, nil)</li>
+            </ol>
+            前两个就是Module1 *o = [[Module1 alloc] init];，后面两个就是相当于[o retain]; [o release];，解释完毕，<a href="http://clang.llvm.org/docs/AutomaticReferenceCounting.html">这是文档</a>，大家可以去看看。
+        </div>
+
+        <div class="paragraph">
+            总结：两个方法在前面的处理是一样的，都调用了alloc和init，然后用void objc_retain(id value)，使新创建的对象的引用计数加1，紧接着用id objc_storeStrong(id *object, id value)，第二个参数传NULL，使其引用计数减1，此时新创建的对象的引用计数为1（因为alloc），紧接着两个方法出现了差异。第二个方法在最后调用了objc_autoreleaseReturnValue，我们先理解为向对象发送了autorelease消息（正如之前我提到的，编译器会做一些优化，结果是不需要发送autorelease），符合谁生产谁释放的规则，得证！
+        </div>
+    </section>
+
+</article>
+
+</body>
+</html>

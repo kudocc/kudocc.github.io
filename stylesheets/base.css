@@ -17,8 +17,8 @@ body {
 	border-top-style: solid;
 	border-top-color: #a0a0a0;
 	border-width: 1px;
-	padding-top: 5px;
 	margin: 5px 0 5px 0;
+	padding-top: 15px;
 }
 
 .blogsummarytitle a {
@@ -28,7 +28,7 @@ body {
 
 .blogsummarycontent {
 	font-size: 1em;
-	margin:3px 0 3px 0;
+	margin:23px 0 23px 0;
 	line-height: 1.2;
 }
 
@@ -63,9 +63,16 @@ body {
 
 .objc-code {
 	background: #e0e0e0;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 
 #blogcontent {
+	margin-left: 2%;
+	margin-right: 2%;
+}
+
+article {
 	margin-left: 2%;
 	margin-right: 2%;
 }
@@ -75,38 +82,12 @@ section {
 	margin-bottom: 50px;
 }
 
-/*img.photo {*/
-	/*margin-top: 5px;*/
-	/*margin-bottom: 4px;*/
-/*}*/
-
 div.paragraph {
-	margin-top: 10px;
-	margin-bottom:10px;
+	margin-top: 0px;
+	margin-bottom:20px;
 }
 
 /* blog 2 test */
-
-#div1 {
-	width: 200px;
-	height: 200px;
-	background: #f00;
-}
-
-#div2 {
-	width: 300px;
-	height: 300px;
-	float: left;
-	background: #00f;
-}
-
-#div3 {
-	width: 400px;
-	height: 400px;
-	float: left;
-	clear: left;
-	background: #0f0;
-}
 
 pre {
 	background: #0090ff;
