@@ -47,7 +47,7 @@
     在ARC下，在一个方法中返回一个对象我们都有写过，但是你知道方法的名称对编译器的影响么？当方法的名字以alloc、new、copy、mutableCopy开头时，产生的对象归调用者所有，就是调用者负责释放；否则，产生的对象由创建它的方法来释放，即应该在方法的最后对返回的对象发送autorelease消息（事实上编译器在这有一个优化，可能不会发送autorelease，我想以后单独谈谈这个优化）。
   </div>
   
-  <input type=submit value='abcdefg' onclick='alert("abcd")' />
+  <input id=su type=submit value='abcdefg' onclick='alert("abcd")' />
 
   </body>
 </html>
