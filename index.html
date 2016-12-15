@@ -4,34 +4,6 @@
   <head>
     <title>Too hard to come up with the title</title>
     <link href="stylesheets/base.css" rel="stylesheet" />
-    <script src="http://s.dddaodian.com/panda/ddf/shop/mobile/shopfront/js/jquery-2.1.4.min.js"></script>
-    <script src="http://s.dddaodian.com/panda/ddf/shop/mobile/shopfront/js/fastclick.js"></script>
-    <script type="text/javascript">
-      // app 接口调用
-
-    //设置原生标题
-    var funStr = "dodopay_chgPageTitle?title=商家如何提现？";
-    requestNativeFun(funStr);
-
-    function requestNativeFun(protocolStr) {
-        var url = "objc://" + protocolStr;
-        loadURL(url);
-    }
-
-    function loadURL(url) {
-        var iFrame;
-        iFrame = document.createElement("iframe");
-        iFrame.setAttribute("src", url);
-        iFrame.setAttribute("style", "display:none;");
-        iFrame.setAttribute("height", "0px");
-        iFrame.setAttribute("width", "0px");
-        iFrame.setAttribute("frameborder", "0");
-        document.body.appendChild(iFrame);
-        iFrame.parentNode.removeChild(iFrame);
-        iFrame = null;
-    }
-
-    </script>
   </head>
 
   <body>
@@ -75,5 +47,33 @@
     在ARC下，在一个方法中返回一个对象我们都有写过，但是你知道方法的名称对编译器的影响么？当方法的名字以alloc、new、copy、mutableCopy开头时，产生的对象归调用者所有，就是调用者负责释放；否则，产生的对象由创建它的方法来释放，即应该在方法的最后对返回的对象发送autorelease消息（事实上编译器在这有一个优化，可能不会发送autorelease，我想以后单独谈谈这个优化）。
   </div>
 
+  <script src="http://s.dddaodian.com/panda/ddf/shop/mobile/shopfront/js/jquery-2.1.4.min.js"></script>
+    <script src="http://s.dddaodian.com/panda/ddf/shop/mobile/shopfront/js/fastclick.js"></script>
+    <script type="text/javascript">
+      // app 接口调用
+
+    //设置原生标题
+    var funStr = "dodopay_chgPageTitle?title=商家如何提现？";
+    requestNativeFun(funStr);
+
+    function requestNativeFun(protocolStr) {
+        var url = "objc://" + protocolStr;
+        loadURL(url);
+    }
+
+    function loadURL(url) {
+        var iFrame;
+        iFrame = document.createElement("iframe");
+        iFrame.setAttribute("src", url);
+        iFrame.setAttribute("style", "display:none;");
+        iFrame.setAttribute("height", "0px");
+        iFrame.setAttribute("width", "0px");
+        iFrame.setAttribute("frameborder", "0");
+        document.body.appendChild(iFrame);
+        iFrame.parentNode.removeChild(iFrame);
+        iFrame = null;
+    }
+
+    </script>
   </body>
 </html>
