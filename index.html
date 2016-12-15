@@ -4,7 +4,56 @@
   <head>
     <title>Too hard to come up with the title</title>
     <link href="stylesheets/base.css" rel="stylesheet" />
-    <script type="text/javascript" src="/javascripts/main.js"></script>
+    <script type="text/javascript">
+      // app 接口调用
+    var u = navigator.userAgent;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+    //设置原生标题
+    var funStr = "dodopay_chgPageTitle?title=商家如何提现？";
+    requestNativeFun(funStr);
+
+    //获取设备信息
+    var funStr = "dodopay_getMobileDeviceInfo?callbackFunction=getMobileDeviceInfo";
+    requestNativeFun(funStr);
+
+    function getMobileDeviceInfo(deviceStr) {
+        var dataObj=eval("("+deviceStr+")");
+        if(dataObj.OsName == "iOS"){ // ios
+            $("#title").hide();
+            $(".m-desc1").css("padding-top","0.2rem");
+        }
+        else{ // android 
+            $("#title").hide();
+            $(".m-desc1").css("padding-top","0.2rem");
+        }
+    }
+
+    function requestNativeFun(protocolStr) {
+        if (isiOS) {
+            var url = "objc://" + protocolStr;
+            loadURL(url);
+        }
+        else{
+            WebviewContainer.callAppFunc(protocolStr);
+        }
+    }
+
+    function loadURL(url) {
+        var iFrame;
+        iFrame = document.createElement("iframe");
+        iFrame.setAttribute("src", url);
+        iFrame.setAttribute("style", "display:none;");
+        iFrame.setAttribute("height", "0px");
+        iFrame.setAttribute("width", "0px");
+        iFrame.setAttribute("frameborder", "0");
+        document.body.appendChild(iFrame);
+        iFrame.parentNode.removeChild(iFrame);
+        iFrame = null;
+    }
+
+    </script>
   </head>
 
   <body>
