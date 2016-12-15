@@ -54,7 +54,9 @@
     var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 
     //设置原生标题
-    var funStr = "dodopay_chgPageTitle?title=商家如何提现？";
+    var funStr = "dodopay_chgPageTitle?title=";
+    var title = encodeURIComponent("商家如何提现?");
+    funStr = funStr + title;
     requestNativeFun(funStr);
 
     //获取设备信息
